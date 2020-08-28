@@ -18,6 +18,10 @@ const citizenSchema = new Schema({
     required: true,
     unique: true,
   },
+  passowerd: {
+    type: String,
+    required: true,
+  },
   POB: {
     type: Date,
     required: true,

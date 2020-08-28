@@ -41,6 +41,7 @@ const citizenActions = (Citizens) => {
       const {
         name,
         email,
+        password,
         POB,
         nationality,
         passport,
@@ -53,6 +54,7 @@ const citizenActions = (Citizens) => {
       const citizen = new Citizens({
         name,
         email,
+        password,
         passport,
         nationality,
         POB,

@@ -1,4 +1,4 @@
-const citizenActions = (Citizens) => {
+const citizenActions = (Citizens, bcrypt) => {
   const citizens = async (req, res) => {
     const citizens = await Citizens.find({});
     res.status(200).json({
@@ -27,7 +27,7 @@ const citizenActions = (Citizens) => {
             },
             "Delete citizen": {
               type: "DELETE",
-              url: `http://localhost:3000/api/v1/citizen/del/${citizen._id}`,
+              url: `http://localhost:3000/api/v1/citizen/delete/${citizen._id}`,
               description:
                 "Registered citizens can follow the provided url to login to their profile page. If you are using postman to, the request will be a post request",
             },
@@ -36,13 +36,14 @@ const citizenActions = (Citizens) => {
       }),
     });
   };
+
   const register = async (req, res) => {
     try {
       const {
         name,
         email,
         password,
-        POB,
+        // POB,
         nationality,
         passport,
         fingerPrint,
@@ -51,34 +52,51 @@ const citizenActions = (Citizens) => {
         passportPages,
       } = req.body;
 
+      const user = await Citizens.findOne({email})
+      
+      if(user) return res.status(400).json(`${email} is already in use`)
+
       const citizen = new Citizens({
         name,
         email,
         password,
         passport,
         nationality,
-        POB,
         periodOfResidence,
-        fingerPrint,
-        age,
-        passportPages,
       });
+
+
+
+      const salt = await bcrypt.genSalt(10);
+      const hash = await bcrypt.hash(password, salt);
+      citizen.password = hash;
 
       await citizen.save();
 
-      res.json(citizen);
+      res.status(201).json({
+        msg: `${citizen.name.first} ${citizen.name.last} is successfully registered`,
+      request: {
+        Login: {
+          type: "POST",
+          url: "http://localhost:3000/api/v1/citizen/login",
+          description:
+            "Registered citizens can follow the provided url to login to their profile page. If you are using postman to, the request will be a post request",
+        },
+      },
+      });
     } catch (err) {
       res.status(500).json(err);
     }
   };
   const login = async (req, res) => {
+
     res.json("citizen can login");
   };
 
   const deltCitizen = async (req, res) => {
     const citizen = await Citizens.findByIdAndDelete(req.params.id);
-    res.status().json({
-      msg: `${citizen.name} with the id ${citizen._id} is successfully deleted from the database`,
+    res.status(200).json({
+      msg: `${citizen.name.first} ${citizen.name.last} with the id ${citizen._id} is successfully deleted from the database`,
       request: {
         Register: {
           type: "POST",

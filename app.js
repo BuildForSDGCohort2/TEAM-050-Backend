@@ -1,7 +1,6 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const { PORT, url } = require("./config/default");
-const { urlencoded } = require("body-parser");
 require("./config/db")();
 
 const app = express();

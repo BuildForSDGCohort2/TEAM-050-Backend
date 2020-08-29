@@ -18,14 +18,14 @@ const citizenSchema = new Schema({
     required: true,
     unique: true,
   },
-  passowerd: {
+  password: {
     type: String,
     required: true,
   },
-  POB: {
-    type: Date,
-    required: true,
-  },
+  // POB: {
+  //   type: Date,
+  //   required: true,
+  // },
   nationality: {
     type: String,
     required: true,
@@ -45,46 +45,46 @@ const citizenSchema = new Schema({
       required: true,
     },
   },
-  fingerPrint: {
-    type: String,
-  },
-  periodOfResidence: {
-    type: Date,
-    required: true,
-  },
-  age: {
-    type: String,
-    required: true,
-  },
-  passportPages: {
-    dataPage1: {
-      type: String,
-      required: true,
-    },
-    dataPage2: {
-      type: String,
-      required: true,
-    },
-    dataPage3: {
-      type: String,
-      required: true,
-    },
-    VisasPage: {
-      type: String,
-      required: true,
-    },
-    entryStamp: {
-      type: String,
-      required: true,
-    },
-    departureStamp: {
-      type: String,
-      required: true,
-    },
-    fingerPrint: {
-      type: String,
-    },
-  },
+  // fingerPrint: {
+  //   type: String,
+  // },
+  // periodOfResidence: {
+  //   type: Date,
+  //   required: true,
+  // },
+  // age: {
+  //   type: String,
+  //   required: true,
+  // },
+  // passportPages: {
+  //   dataPage1: {
+  //     type: String,
+  //     required: true,
+  //   },
+  //   dataPage2: {
+  //     type: String,
+  //     required: true,
+  //   },
+  //   dataPage3: {
+  //     type: String,
+  //     required: true,
+  //   },
+  //   VisasPage: {
+  //     type: String,
+  //     required: true,
+  //   },
+  //   entryStamp: {
+  //     type: String,
+  //     required: true,
+  //   },
+  //   departureStamp: {
+  //     type: String,
+  //     required: true,
+  //   },
+  //   fingerPrint: {
+  //     type: String,
+  //   },
+  // },
 });
 
 module.exports = mongoose.model("citizen", citizenSchema);

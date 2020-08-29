@@ -1,4 +1,4 @@
-const citizenActions = (Citizens, bcrypt) => {
+const citizenActions = (Citizens, bcrypt, mySecrete, jwt, validationResult) => {
   const citizens = async (req, res) => {
     const citizens = await Citizens.find({});
     res.status(200).json({
@@ -38,6 +38,11 @@ const citizenActions = (Citizens, bcrypt) => {
   };
 
   const register = async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
     try {
       const {
         name,
@@ -52,9 +57,9 @@ const citizenActions = (Citizens, bcrypt) => {
         passportPages,
       } = req.body;
 
-      const user = await Citizens.findOne({email})
-      
-      if(user) return res.status(400).json(`${email} is already in use`)
+      const user = await Citizens.findOne({ email });
+
+      if (user) return res.status(400).json(`${email} is already in use`);
 
       const citizen = new Citizens({
         name,
@@ -65,8 +70,6 @@ const citizenActions = (Citizens, bcrypt) => {
         periodOfResidence,
       });
 
-
-
       const salt = await bcrypt.genSalt(10);
       const hash = await bcrypt.hash(password, salt);
       citizen.password = hash;
@@ -75,22 +78,73 @@ const citizenActions = (Citizens, bcrypt) => {
 
       res.status(201).json({
         msg: `${citizen.name.first} ${citizen.name.last} is successfully registered`,
-      request: {
-        Login: {
-          type: "POST",
-          url: "http://localhost:3000/api/v1/citizen/login",
-          description:
-            "Registered citizens can follow the provided url to login to their profile page. If you are using postman to, the request will be a post request",
+        request: {
+          Login: {
+            type: "POST",
+            url: "http://localhost:3000/api/v1/citizen/login",
+            description:
+              "Registered citizens can follow the provided url to login to their profile page. If you are using postman to, the request will be a post request",
+          },
         },
-      },
       });
     } catch (err) {
       res.status(500).json(err);
     }
   };
-  const login = async (req, res) => {
 
-    res.json("citizen can login");
+  const login = async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    try {
+      const { email, password } = req.body;
+
+      const user = await Citizens.findOne({ email });
+
+      if (!user)
+        return res.status(401).json({
+          msg: `Invalid Credentials`,
+          request: {
+            Register: {
+              type: "POST",
+              url: "http://localhost:3000/api/v1/citizen/register",
+              description:
+                "Follow the provided url to make a registration. If you are using postman to, the request will be a post request",
+            },
+          },
+        });
+
+      const isMatch = await bcrypt.compare(password, user.password);
+      console.log(isMatch);
+
+      if (!isMatch)
+        return res.status(401).json({
+          msg: `Invalid Credentials`,
+          request: {
+            Register: {
+              type: "POST",
+              url: "http://localhost:3000/api/v1/citizen/register",
+              description:
+                "Follow the provided url to make a registration. If you are using postman to, the request will be a post request",
+            },
+          },
+        });
+
+      const payload = {
+        user: user._id,
+      };
+      const token = jwt.sign(payload, mySecrete, { expiresIn: "1hr" });
+      const heads = await res.setHeader("x-auth-header", token);
+
+      res.json({
+        token,
+        heads,
+      });
+    } catch (err) {
+      res.status(500).json(err);
+    }
   };
 
   const deltCitizen = async (req, res) => {

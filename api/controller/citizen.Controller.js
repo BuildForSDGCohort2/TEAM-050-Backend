@@ -1,4 +1,9 @@
 const citizenActions = (Citizens, bcrypt, mySecrete, jwt, validationResult) => {
+  /**
+   * @param       GET /api/v1/citizen
+   * @desc        displays all the registered citizens on the platform
+   * @access      public( Every one can access)
+   */
   const citizens = async (req, res) => {
     const citizens = await Citizens.find({});
     res.status(200).json({
@@ -37,6 +42,11 @@ const citizenActions = (Citizens, bcrypt, mySecrete, jwt, validationResult) => {
     });
   };
 
+  /**
+   * @param       POST /api/v1/citizen/register
+   * @desc        route to register a citizen
+   * @access      public( Every one can access)
+   */
   const register = async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -92,6 +102,11 @@ const citizenActions = (Citizens, bcrypt, mySecrete, jwt, validationResult) => {
     }
   };
 
+  /**
+   * @param       POST /api/v1/citizen/login
+   * @desc        route for citizens to signin on the platform
+   * @access      public( Every one can access)
+   */
   const login = async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -147,6 +162,11 @@ const citizenActions = (Citizens, bcrypt, mySecrete, jwt, validationResult) => {
     }
   };
 
+  /**
+   * @param       DELETE /api/v1/citizen/delete/:id
+   * @desc        gives citizen the ability to delete their account from the platform
+   * @access      protected( only signed in citizens and admin can access this route)
+   */
   const deltCitizen = async (req, res) => {
     const citizen = await Citizens.findByIdAndDelete(req.params.id);
     res.status(200).json({
@@ -167,9 +187,21 @@ const citizenActions = (Citizens, bcrypt, mySecrete, jwt, validationResult) => {
       },
     });
   };
+
+  /**
+   * @param       GET /api/v1/citizen/profile/:id
+   * @desc        displays citizens dashboard
+   * @access      public( only signed in citizens can access)
+   */
   const profile = async (req, res) => {
     res.json("citizen can view profile");
   };
+
+  /**
+   * @param       POST /api/v1/citizen/logout
+   * @desc        citizen can logout of the platform
+   * @access      protected( only logged in citizen can access)
+   */
   const logout = async (req, res) => {
     res.json("citizen can logout");
   };

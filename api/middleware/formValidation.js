@@ -8,7 +8,7 @@ const validation = (body) => {
 
   const loginForm = [
     body("email").isEmail(),
-    body("password").not().notEmpty()
+    body("password").not().notEmpty(),
   ];
   return {
     regForm,

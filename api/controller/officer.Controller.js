@@ -1,38 +1,38 @@
-const officerActions = (Officer, bcrypt, mySecrete, jwt, validationResult) => {
+const officerActions = (Officers, bcrypt, mySecrete, jwt, validationResult) => {
     /**
-     * @param       GET /api/v1/citizen
-     * @desc        displays all the registered citizens on the platform
+     * @param       GET /api/v1/officer
+     * @desc        displays all the registered officers
      * @access      public( Every one can access)
      */
-    const citizens = async (req, res) => {
-      const citizens = await Citizens.find({});
+    const officer = async (req, res) => {
+      const officers = await Officers.find({});
       res.status(200).json({
-        totalCitizens: citizens.length,
-        citizens: citizens.map((citizen) => {
+        totalOfficers: officers.length,
+        officers: officers.map((officer) => {
           return {
-            citizen,
+            officer,
             request: {
-              "view Citizen": {
+              "view Officer": {
                 type: "GET",
-                url: `http://localhost:3000/api/v1/citizen/profile/${citizen._id}`,
+                url: `http://localhost:3000/api/v1/officer/profile/${officer._id}`,
                 description:
-                  "Click on the url to view all the detail about this citizen",
+                  "Click on the url to view all the detail about this officer",
               },
-              "Register New Citizen": {
+              "Add an Officer": {
                 type: "POST",
-                url: "http://localhost:3000/api/v1/citizen/register",
+                url: "http://localhost:3000/api/v1/officer/register",
                 description:
                   "Follow the provided url to make a registration. If you are using postman to, the request will be a post request",
               },
               Login: {
                 type: "POST",
-                url: "http://localhost:3000/api/v1/citizen/login",
+                url: "http://localhost:3000/api/v1/officer/login",
                 description:
-                  "Registered citizens can follow the provided url to login to their profile page. If you are using postman to, the request will be a post request",
+                  "Registered officers can follow the provided url to login to their profile page. If you are using postman to, the request will be a post request",
               },
-              "Delete citizen": {
+              "Remove an Officer": {
                 type: "DELETE",
-                url: `http://localhost:3000/api/v1/citizen/delete/${citizen._id}`,
+                url: `http://localhost:3000/api/v1/officer/delete/${officer._id}`,
                 description:
                   "Registered citizens can follow the provided url to login to their profile page. If you are using postman to, the request will be a post request",
               },

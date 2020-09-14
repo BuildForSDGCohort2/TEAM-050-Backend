@@ -1,11 +1,11 @@
 const express = require('express')
 const { Router } = express;
-const Officer = require('./../model/officer.model')
+const Officers = require('./../model/officer.model')
 const bcrypt = require('bcrypt')
 const { mySecrete } = require('./../../config/default')
 const jwt = require('jsonwebtoken')
-const { va } = require('./../middleware/formValidation')
-const {} = require('./../controller/officer.Controller')(Officer, bcrypt)
+const { validationResult } = require("express-validator");
+const {} = require('./../controller/officer.Controller')(Officers, bcrypt, validationResult, jwt)
 
 
 
@@ -15,4 +15,5 @@ officerRouter.route('/').get()
 officerRouter.route('/register').post()
 officerRouter.route('/login').post()
 officerRouter.route('/logout').get()
-officerRouter.route('/profile').get()
+officerRouter.route('/profile/:officerID').get()
+officerRouter.route('/delete/:officerID').delete()

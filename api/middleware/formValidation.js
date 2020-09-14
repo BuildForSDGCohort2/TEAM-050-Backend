@@ -1,5 +1,3 @@
-const { validationResult } = require("express-validator");
-
 const validation = (body) => {
   const regForm = [
     body("email").isEmail(),

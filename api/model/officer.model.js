@@ -4,11 +4,11 @@ const { Schema } = mongoose
 
 const officer = new Schema({
     name: {
-        fName: {
+        first: {
             type: String,
             required: true
         },
-        lName: {
+        last: {
             type: String,
             require: true
         }
@@ -20,7 +20,11 @@ const officer = new Schema({
     password: {
         type: String,
         required: true
-    }
+    },
     gender: String,
 
+},{
+    timestamps: true
 })
+
+module.exports = mongoose.model('officers', officer)

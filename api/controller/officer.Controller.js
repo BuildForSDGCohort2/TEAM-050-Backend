@@ -1,99 +1,103 @@
-const officerActions = (Officers, bcrypt, mySecrete, jwt, validationResult) => {
+const { Error } = require("mongoose");
+const { PORT } = require("../../config/default");
+
+const officerActions = (Officers, bcrypt, PORT, jwt, validationResult) => {
     /**
      * @param       GET /api/v1/officer
      * @desc        displays all the registered officers
-     * @access      public( Every one can access)
+     * @access      private( only super officer can access)
      */
-    const officer = async (req, res) => {
-      const officers = await Officers.find({});
-      res.status(200).json({
-        totalOfficers: officers.length,
-        officers: officers.map((officer) => {
-          return {
-            officer,
-            request: {
-              "view Officer": {
-                type: "GET",
-                url: `http://localhost:3000/api/v1/officer/profile/${officer._id}`,
-                description:
-                  "Click on the url to view all the detail about this officer",
-              },
-              "Add an Officer": {
-                type: "POST",
-                url: "http://localhost:3000/api/v1/officer/register",
-                description:
-                  "Follow the provided url to make a registration. If you are using postman to, the request will be a post request",
-              },
-              Login: {
-                type: "POST",
-                url: "http://localhost:3000/api/v1/officer/login",
-                description:
-                  "Registered officers can follow the provided url to login to their profile page. If you are using postman to, the request will be a post request",
-              },
-              "Remove an Officer": {
-                type: "DELETE",
-                url: `http://localhost:3000/api/v1/officer/delete/${officer._id}`,
-                description:
-                  "Registered citizens can follow the provided url to login to their profile page. If you are using postman to, the request will be a post request",
-              },
-            },
-          };
-        }),
-      });
+
+    const officers = async (req, res) => {
+        try {
+            const officers = await Officers.find({});
+            res.status(200).json({
+              msg: 'Testing the route',
+              totalOfficers: officers.length,
+              officers: officers.map((officer) => {
+                return {
+                  officer,
+                  request: {
+                    "view Officer": {
+                      type: "GET",
+                      url: `http://localhost:3000/api/v1/officer/profile/${officer._id}`,
+                      description:
+                        "Click on the url to view all the detail about this officer",
+                    },
+                    "Add an Officer": {
+                      type: "POST",
+                      url: "http://localhost:3000/api/v1/officer/register",
+                      description:
+                        "Follow the provided url to make a registration. If you are using postman to, the request will be a post request",
+                    },
+                    Login: {
+                      type: "POST",
+                      url: "http://localhost:3000/api/v1/officer/login",
+                      description:
+                        "Registered officers can follow the provided url to login to their profile page. If you are using postman to, the request will be a post request",
+                    },
+                    "Remove an Officer": {
+                      type: "DELETE",
+                      url: `http://localhost:3000/api/v1/officer/delete/${officer._id}`,
+                      description:
+                        "Registered citizens can follow the provided url to login to their profile page. If you are using postman to, the request will be a post request",
+                    },
+                  },
+                };
+              }),
+            });
+            
+        } catch (err) {
+            res.status(500).json(err)
+            
+        }
     };
   
     /**
-     * @param       POST /api/v1/citizen/register
-     * @desc        route to register a citizen
-     * @access      public( Every one can access)
+     * @param       POST /api/v1/officer/register
+     * @desc        Add an officer here
+     * @access      private( Everyone can access)
      */
     const register = async (req, res) => {
-      const errors = validationResult(req);
-      if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
-      }
+        console.log('officer route')
+    //   const errors = validationResult(req);
+    //   if (!errors.isEmpty()) {
+    //     return res.status(400).json({ errors: errors.array() });
+    //   }
   
       try {
         const {
           name,
           email,
           password,
-          // POB,
-          nationality,
-          passport,
-          fingerPrint,
-          periodOfResidence,
-          age,
-          passportPages,
+          gender
         } = req.body;
   
-        const user = await Citizens.findOne({ email });
+        const user = await Officers.findOne({ email });
   
         if (user) return res.status(400).json(`${email} is already in use`);
   
-        const citizen = new Citizens({
+        const officer = new Officers({
           name,
           email,
           password,
-          passport,
-          nationality,
-          periodOfResidence,
+          gender
         });
   
         const salt = await bcrypt.genSalt(10);
         const hash = await bcrypt.hash(password, salt);
-        citizen.password = hash;
+        officer.password = hash;
   
-        await citizen.save();
+        await officer.save();
   
         res.status(201).json({
-          msg: `${citizen.name.first} ${citizen.name.last} is successfully registered`,
+          msg: `${officer.name.first} ${officer.name.last} is successfully registered`,
           request: {
             Login: {
               type: "POST",
-              url: "http://localhost:3000/api/v1/citizen/login",
+              url: "http://localhost:3000/api/v1/officer/login",
               description:
-                "Registered citizens can follow the provided url to login to their profile page. If you are using postman to, the request will be a post request",
+                "Registered officer can follow the provided url to login to their profile page. If you are using postman to, the request will be a post request",
             },
           },
         });
@@ -103,20 +107,23 @@ const officerActions = (Officers, bcrypt, mySecrete, jwt, validationResult) => {
     };
   
     /**
-     * @param       POST /api/v1/citizen/login
-     * @desc        route for citizens to signin on the platform
-     * @access      public( Every one can access)
+     * @param       POST /api/v1/officer/login
+     * @desc        officer login route
+     * @access      public( Everyone can access)
      */
     const login = async (req, res) => {
-      const errors = validationResult(req);
-      if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
-      }
-  
+      // const errors = validationResult(req);
+      // if (!errors.isEmpty()) {
+      //   return res.status(400).json({ errors: errors.array() });
+      // }
+
       try {
         const { email, password } = req.body;
-  
-        const user = await Citizens.findOne({ email });
+        
+        if(!(email && password)) return res.status(404).json('Please fill in your email and password')
+
+        const user = await Officers.findOne({ email });
+        
   
         if (!user)
           return res.status(401).json({
@@ -124,7 +131,7 @@ const officerActions = (Officers, bcrypt, mySecrete, jwt, validationResult) => {
             request: {
               Register: {
                 type: "POST",
-                url: "http://localhost:3000/api/v1/citizen/register",
+                url: "http://localhost:3000/api/v1/officer/register",
                 description:
                   "Follow the provided url to make a registration. If you are using postman to, the request will be a post request",
               },
@@ -132,30 +139,34 @@ const officerActions = (Officers, bcrypt, mySecrete, jwt, validationResult) => {
           });
   
         const isMatch = await bcrypt.compare(password, user.password);
-        console.log(isMatch);
+        
   
-        if (!isMatch)
+        if(!isMatch){
           return res.status(401).json({
             msg: `Invalid Credentials`,
             request: {
               Register: {
                 type: "POST",
-                url: "http://localhost:3000/api/v1/citizen/register",
+                url: "http://localhost:3000/api/v1/officer/register",
                 description:
                   "Follow the provided url to make a registration. If you are using postman to, the request will be a post request",
               },
             },
           });
-  
+        }
         const payload = {
           user: user._id,
         };
-        const token = jwt.sign(payload, mySecrete, { expiresIn: "1hr" });
-        const heads = await res.setHeader("x-auth-header", token);
-  
-        res.json({
+        console.log(PORT)
+          const token = jwt.sign(payload, mySecrete, { expiresIn: "1hr" });
+          // const heads = await res.setHeader("x-auth-header", token);
+          console.log(payload)
+          console.log("this don't wanna work here")
+          
+        res.status(200).json({
+          msg: 'You are logged in',
           token,
-          heads,
+          // heads,
         });
       } catch (err) {
         res.status(500).json(err);
@@ -207,8 +218,8 @@ const officerActions = (Officers, bcrypt, mySecrete, jwt, validationResult) => {
     };
   
     return {
-      deltCitizen,
-      citizens,
+    //   deltOfficer,
+      officers,
       register,
       login,
       logout,

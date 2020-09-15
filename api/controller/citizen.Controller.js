@@ -162,7 +162,32 @@ const citizenActions = (Citizens, bcrypt, mySecrete, jwt, validationResult) => {
     }
   };
 
+
   /**
+   * @param       GET /api/v1/citizen/profile/:id
+   * @desc        displays citizens dashboard
+   * @access      public( only signed in citizens can access)
+   */
+  const profile = async (req, res) => {
+    const citizen = await Citizens.findOne({_id: req.params.id})
+    res.json(citizen);
+  };
+
+  /**
+   * @param       POST /api/v1/citizen/edit/:id
+   * @desc        citizen can logout of the platform
+   * @access      protected( only logged in citizen can access)
+   */
+  const update = async (req, res) => {
+    const citizen = await Citizens.findByIdAndUpdate(req.params.id, req.body)
+    res.json({
+      msg: "citizen had been edited, your profile is now updated.",
+      citizen
+    })
+  };
+
+
+    /**
    * @param       DELETE /api/v1/citizen/delete/:id
    * @desc        gives citizen the ability to delete their account from the platform
    * @access      protected( only signed in citizens and admin can access this route)
@@ -188,14 +213,6 @@ const citizenActions = (Citizens, bcrypt, mySecrete, jwt, validationResult) => {
     });
   };
 
-  /**
-   * @param       GET /api/v1/citizen/profile/:id
-   * @desc        displays citizens dashboard
-   * @access      public( only signed in citizens can access)
-   */
-  const profile = async (req, res) => {
-    res.json("citizen can view profile");
-  };
 
   /**
    * @param       POST /api/v1/citizen/logout
@@ -213,6 +230,7 @@ const citizenActions = (Citizens, bcrypt, mySecrete, jwt, validationResult) => {
     login,
     logout,
     profile,
+    update
   };
 };
 

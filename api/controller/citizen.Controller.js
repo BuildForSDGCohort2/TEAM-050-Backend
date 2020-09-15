@@ -174,7 +174,7 @@ const citizenActions = (Citizens, bcrypt, mySecrete, jwt, validationResult) => {
   };
 
   /**
-   * @param       POST /api/v1/citizen/edit/:id
+   * @param       PATCH /api/v1/citizen/edit/:id
    * @desc        citizen can logout of the platform
    * @access      protected( only logged in citizen can access)
    */

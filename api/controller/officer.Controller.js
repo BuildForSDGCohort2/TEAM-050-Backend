@@ -201,18 +201,30 @@ const officerActions = (Officers, bcrypt, validationResult, jwt, mySecrete) => {
      * @access      public( only signed in citizens can access)
      */
     const profile = async (req, res) => {
-      res.json("citizen can view profile");
+      try {
+        const officer = await Officers.findOne({_id: req.params.officerID})
+        res.json(officer);
+      } catch (err) {
+        res.status(500).json(err)
+        
+      }
     };
 
-    
+  
     /**
-     * @param       GET /api/v1/citizen/profile/:id
+     * @param       PATCH /api/v1/citizen/edit/:id
      * @desc        displays citizens dashboard
      * @access      public( only signed in citizens can access)
      */
-    const profile = async (req, res) => {
-      res.json("citizen can view profile");
+    const update = async (req, res) => {
+      try {
+        const officer = await Officers.findOneAndUpdate({_id: req.params.officerID}, req.body)
+        res.json(officer);
+      } catch (err) {
+        res.status(500).json(err)
+      }
     };
+
   
     /**
      * @param       POST /api/v1/citizen/logout
@@ -220,6 +232,7 @@ const officerActions = (Officers, bcrypt, validationResult, jwt, mySecrete) => {
      * @access      protected( only logged in citizen can access)
      */
     const logout = async (req, res) => {
+      
       res.json("citizen can logout");
     };
   
@@ -230,6 +243,7 @@ const officerActions = (Officers, bcrypt, validationResult, jwt, mySecrete) => {
       login,
       logout,
       profile,
+      update
     };
   };
   

@@ -10,13 +10,16 @@ const {
   officers,
   register,
   login,
-  deltOfficer
+  deltOfficer,
+  profile,
+  logout,
+  update
 } = require("./../controller/officer.Controller")(
   Officers,
   bcrypt,
   validationResult,
   jwt,
-  mySecrete
+  mySecrete,
 );
 
 
@@ -25,8 +28,9 @@ const officerRouter = Router();
 officerRouter.route("/").get(officers);
 officerRouter.route("/register").post(register);
 officerRouter.route("/login").post(login);
-officerRouter.route("/logout").get();
-officerRouter.route("/profile/:officerID").get();
+officerRouter.route("/logout").get(logout);
+officerRouter.route("/edit/:officerID").patch(update);
+officerRouter.route("/profile/:officerID").get(profile);
 officerRouter.route("/delete/:officerID").delete(deltOfficer);
 
 module.exports = officerRouter;

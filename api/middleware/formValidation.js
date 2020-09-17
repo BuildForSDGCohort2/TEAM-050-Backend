@@ -1,14 +1,12 @@
-const { validationResult } = require("express-validator");
-
-const validation = (body) => {
+const validation = (check) => {
   const regForm = [
-    body("email").isEmail(),
-    body("password").isLength({ min: 5 }),
+    check("email").isEmail(),
+    check("password").isLength({ min: 5 }),
   ];
 
   const loginForm = [
-    body("email").isEmail(),
-    body("password").not().notEmpty(),
+    check("email").isEmail(),
+    check("password").not().notEmpty(),
   ];
   return {
     regForm,

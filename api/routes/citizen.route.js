@@ -12,6 +12,7 @@ const {
   profile,
   citizens,
   deltCitizen,
+  update
 } = require("./../controller/citizen.Controller")(
   Citizens,
   bcrypt,
@@ -29,6 +30,7 @@ citizenRouter.route("/login").post(loginForm, login);
 citizenRouter.route("/logout").post(logout);
 citizenRouter.route("/").get(citizens);
 citizenRouter.route("/profile/:id").get(profile);
+citizenRouter.route("/edit/:id").patch(update);
 citizenRouter.route("/delete/:id").delete(deltCitizen);
 
 module.exports = citizenRouter;

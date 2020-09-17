@@ -26,5 +26,5 @@
 
 ## Author
 
-- [UDOFIA](https://github.com/udofia2)-dev)
+- [UDOFIA](https://github.com/udofia2)
 

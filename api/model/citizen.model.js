@@ -45,9 +45,9 @@ const citizenSchema = new Schema({
       required: true,
     },
   },
-  // fingerPrint: {
-  //   type: String,
-  // },
+  fingerPrint: {
+    type: String,
+  },
   // periodOfResidence: {
   //   type: Date,
   //   required: true,

@@ -1,3 +1,5 @@
+const Offenses = require("./../model/offense.model");
+
 const citizenActions = (Citizens, bcrypt, mySecrete, jwt, validationResult) => {
   /**
    * @param       GET /api/v1/citizen
@@ -5,7 +7,7 @@ const citizenActions = (Citizens, bcrypt, mySecrete, jwt, validationResult) => {
    * @access      public( Every one can access)
    */
   const citizens = async (req, res) => {
-    const citizens = await Citizens.find({});
+    const citizens = await Citizens.find({}).populate("offenses");
     res.status(200).json({
       totalCitizens: citizens.length,
       citizens: citizens.map((citizen) => {
@@ -23,6 +25,12 @@ const citizenActions = (Citizens, bcrypt, mySecrete, jwt, validationResult) => {
               url: "http://localhost:3000/api/v1/citizen/register",
               description:
                 "Follow the provided url to make a registration. If you are using postman to, the request will be a post request",
+            },
+            "Edit Citizen details": {
+              type: "PATCH",
+              url: `http://localhost:3000/api/v1/citizen/edit/${citizen._id}`,
+              description:
+                "Citizen profile can be edited and updated on the profile page. If you are using postman to, the request will be a post request",
             },
             Login: {
               type: "POST",
@@ -72,6 +80,7 @@ const citizenActions = (Citizens, bcrypt, mySecrete, jwt, validationResult) => {
       if (user) return res.status(400).json(`${email} is already in use`);
 
       const citizen = new Citizens({
+        // _id: mongoose.Types.ObjectId,
         name,
         email,
         password,
@@ -162,15 +171,17 @@ const citizenActions = (Citizens, bcrypt, mySecrete, jwt, validationResult) => {
     }
   };
 
-
   /**
    * @param       GET /api/v1/citizen/profile/:id
    * @desc        displays citizens dashboard
    * @access      public( only signed in citizens can access)
    */
   const profile = async (req, res) => {
-    const citizen = await Citizens.findOne({_id: req.params.id})
-    res.json(citizen);
+    const citizen = await Citizens.findOne({ _id: req.params.id });
+    
+    const offense = await Offenses.find({citizen: req.params.id});
+    // console.log(offense)
+    res.json({ citizenID: citizen, offense });
   };
 
   /**
@@ -179,15 +190,14 @@ const citizenActions = (Citizens, bcrypt, mySecrete, jwt, validationResult) => {
    * @access      protected( only logged in citizen can access)
    */
   const update = async (req, res) => {
-    const citizen = await Citizens.findByIdAndUpdate(req.params.id, req.body)
+    const citizen = await Citizens.findByIdAndUpdate(req.params.id, req.body);
     res.json({
       msg: "citizen had been edited, your profile is now updated.",
-      citizen
-    })
+      citizen,
+    });
   };
 
-
-    /**
+  /**
    * @param       DELETE /api/v1/citizen/delete/:id
    * @desc        gives citizen the ability to delete their account from the platform
    * @access      protected( only signed in citizens and admin can access this route)
@@ -213,7 +223,6 @@ const citizenActions = (Citizens, bcrypt, mySecrete, jwt, validationResult) => {
     });
   };
 
-
   /**
    * @param       POST /api/v1/citizen/logout
    * @desc        citizen can logout of the platform
@@ -230,7 +239,7 @@ const citizenActions = (Citizens, bcrypt, mySecrete, jwt, validationResult) => {
     login,
     logout,
     profile,
-    update
+    update,
   };
 };
 

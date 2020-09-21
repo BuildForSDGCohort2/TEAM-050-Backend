@@ -178,8 +178,8 @@ const citizenActions = (Citizens, bcrypt, mySecrete, jwt, validationResult) => {
    */
   const profile = async (req, res) => {
     const citizen = await Citizens.findOne({ _id: req.params.id });
-    
-    const offense = await Offenses.find({citizen: req.params.id});
+
+    const offense = await Offenses.find({ citizen: req.params.id });
     // console.log(offense)
     res.json({ citizenID: citizen, offense });
   };

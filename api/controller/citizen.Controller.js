@@ -55,7 +55,7 @@ const citizenActions = (Citizens, bcrypt, mySecrete, jwt, validationResult) => {
    * @desc        route to register a citizen
    * @access      public( Every one can access)
    */
-  const register = async (req, res) => {
+  const register = async (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
@@ -87,6 +87,7 @@ const citizenActions = (Citizens, bcrypt, mySecrete, jwt, validationResult) => {
         passport,
         nationality,
         periodOfResidence,
+        profileImage: req.file.path,
       });
 
       const salt = await bcrypt.genSalt(10);
@@ -94,6 +95,8 @@ const citizenActions = (Citizens, bcrypt, mySecrete, jwt, validationResult) => {
       citizen.password = hash;
 
       await citizen.save();
+
+      console.log(citizen);
 
       res.status(201).json({
         msg: `${citizen.name.first} ${citizen.name.last} is successfully registered`,
@@ -126,6 +129,8 @@ const citizenActions = (Citizens, bcrypt, mySecrete, jwt, validationResult) => {
       const { email, password } = req.body;
 
       const user = await Citizens.findOne({ email });
+
+      console.log(user);
 
       if (!user)
         return res.status(401).json({
@@ -160,11 +165,10 @@ const citizenActions = (Citizens, bcrypt, mySecrete, jwt, validationResult) => {
         user: user._id,
       };
       const token = jwt.sign(payload, mySecrete, { expiresIn: "1hr" });
-      const heads = await res.setHeader("x-auth-header", token);
 
       res.json({
-        token,
-        heads,
+        msg: "you are now logged in",
+        token
       });
     } catch (err) {
       res.status(500).json(err);
@@ -190,7 +194,20 @@ const citizenActions = (Citizens, bcrypt, mySecrete, jwt, validationResult) => {
    * @access      protected( only logged in citizen can access)
    */
   const update = async (req, res) => {
-    const citizen = await Citizens.findByIdAndUpdate(req.params.id, req.body);
+    const file = req.file
+
+    const citizen = await Citizens.findOne({ _id: req.params.id });
+
+    if(file)(
+      await citizen.update({$set: {profileImage: req.file.path}})
+    )
+
+    await citizen.updateOne({$set: {password}});
+    console.log(citizen)
+    // const citizen = await Citizens.findByIdAndUpdate(req.params.id, {
+    //   password,
+    //   file
+    // });
     res.json({
       msg: "citizen had been edited, your profile is now updated.",
       citizen,
@@ -232,6 +249,37 @@ const citizenActions = (Citizens, bcrypt, mySecrete, jwt, validationResult) => {
     res.json("citizen can logout");
   };
 
+
+  /**
+   * @param       POST /api/v1/citizen/password/reset
+   * @desc        citizen can logout of the platform
+   * @access      protected( only logged in citizen can access)
+   */
+  const resetPassword = async (req, res) => {
+    let {email, newPassword} = req.body
+
+    const citizen = await Citizens.findOne({email})
+    
+
+    if(!citizen) return res.json('please register')
+
+    if(!newPassword) return res.json({
+      msg: "provide a new password"
+    })
+
+    const salt = await bcrypt.genSalt(10);
+    const hash = await bcrypt.hash(newPassword, salt);
+    newPassword = hash;
+
+    await citizen.updateOne({$set: {password: newPassword}})
+    res.json({
+      msg: "password reset successful",
+      citizen
+    })
+  };
+
+
+
   return {
     deltCitizen,
     citizens,
@@ -240,6 +288,7 @@ const citizenActions = (Citizens, bcrypt, mySecrete, jwt, validationResult) => {
     logout,
     profile,
     update,
+    resetPassword
   };
 };
 

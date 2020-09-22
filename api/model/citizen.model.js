@@ -22,6 +22,7 @@ const citizenSchema = new Schema({
     type: String,
     required: true,
   },
+  profileImage: String,
   // POB: {
   //   type: Date,
   //   required: true,

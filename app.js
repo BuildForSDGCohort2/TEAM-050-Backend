@@ -1,4 +1,4 @@
-const path = require('path')
+const path = require("path");
 const express = require("express");
 const bodyParser = require("body-parser");
 const { PORT, url } = require("./config/default");
@@ -10,8 +10,7 @@ const app = express();
 
 app.use(bodyParser.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname, 'public')))
-
+app.use(express.static(path.join(__dirname, "public")));
 
 app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "*");

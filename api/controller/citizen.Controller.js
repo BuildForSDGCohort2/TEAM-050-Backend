@@ -199,7 +199,7 @@ const citizenActions = (Citizens, bcrypt, mySecrete, jwt, validationResult) => {
     const citizen = await Citizens.findOne({ _id: req.params.id });
 
     if(file)(
-      await citizen.update({$set: {profileImage: req.file.path}})
+      await citizen.updateOne({$set: {profileImage: req.file.path}})
     )
 
     await citizen.updateOne({$set: {password}});

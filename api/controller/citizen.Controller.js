@@ -168,7 +168,7 @@ const citizenActions = (Citizens, bcrypt, mySecrete, jwt, validationResult) => {
 
       res.json({
         msg: "you are now logged in",
-        token
+        token,
       });
     } catch (err) {
       res.status(500).json(err);
@@ -194,16 +194,15 @@ const citizenActions = (Citizens, bcrypt, mySecrete, jwt, validationResult) => {
    * @access      protected( only logged in citizen can access)
    */
   const update = async (req, res) => {
-    const file = req.file
+    const file = req.file;
 
     const citizen = await Citizens.findOne({ _id: req.params.id });
 
-    if(file)(
-      await citizen.updateOne({$set: {profileImage: req.file.path}})
-    )
+    if (file)
+      await citizen.updateOne({ $set: { profileImage: req.file.path } });
 
-    await citizen.updateOne({$set: {password}});
-    console.log(citizen)
+    await citizen.updateOne({ $set: { password } });
+    console.log(citizen);
     // const citizen = await Citizens.findByIdAndUpdate(req.params.id, {
     //   password,
     //   file
@@ -249,36 +248,33 @@ const citizenActions = (Citizens, bcrypt, mySecrete, jwt, validationResult) => {
     res.json("citizen can logout");
   };
 
-
   /**
    * @param       POST /api/v1/citizen/password/reset
    * @desc        citizen can logout of the platform
    * @access      protected( only logged in citizen can access)
    */
   const resetPassword = async (req, res) => {
-    let {email, newPassword} = req.body
+    let { email, newPassword } = req.body;
 
-    const citizen = await Citizens.findOne({email})
-    
+    const citizen = await Citizens.findOne({ email });
 
-    if(!citizen) return res.json('please register')
+    if (!citizen) return res.json("please register");
 
-    if(!newPassword) return res.json({
-      msg: "provide a new password"
-    })
+    if (!newPassword)
+      return res.json({
+        msg: "provide a new password",
+      });
 
     const salt = await bcrypt.genSalt(10);
     const hash = await bcrypt.hash(newPassword, salt);
     newPassword = hash;
 
-    await citizen.updateOne({$set: {password: newPassword}})
+    await citizen.updateOne({ $set: { password: newPassword } });
     res.json({
       msg: "password reset successful",
-      citizen
-    })
+      citizen,
+    });
   };
-
-
 
   return {
     deltCitizen,
@@ -288,7 +284,7 @@ const citizenActions = (Citizens, bcrypt, mySecrete, jwt, validationResult) => {
     logout,
     profile,
     update,
-    resetPassword
+    resetPassword,
   };
 };
 

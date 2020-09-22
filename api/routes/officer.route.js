@@ -2,7 +2,7 @@ const express = require("express");
 const { Router } = express;
 const Officers = require("./../model/officer.model");
 const Offenses = require("./../model/offense.model");
-const Citizens = require('./../model/citizen.model')
+const Citizens = require("./../model/citizen.model");
 const bcrypt = require("bcrypt");
 const { mySecrete } = require("./../../config/default");
 const jwt = require("jsonwebtoken");
@@ -16,7 +16,7 @@ const {
   profile,
   logout,
   update,
-  offense
+  offense,
 } = require("./../controller/officer.Controller")(
   Officers,
   bcrypt,

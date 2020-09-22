@@ -4,7 +4,7 @@ const { images } = require("./../util/profileImage");
 const { mySecrete } = require("./../../config/default");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
-const auth = require('./../middleware/auth')
+const auth = require("./../middleware/auth");
 const { body, validationResult } = require("express-validator");
 const { regForm, loginForm } = require("./../middleware/formValidation")(body);
 const {
@@ -15,7 +15,7 @@ const {
   citizens,
   deltCitizen,
   update,
-  resetPassword
+  resetPassword,
 } = require("./../controller/citizen.Controller")(
   Citizens,
   bcrypt,

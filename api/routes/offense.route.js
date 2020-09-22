@@ -1,11 +1,10 @@
-const express = require('express')
-const { Router } = express
-const { offenses, offense} = require('./../controller/offense.Controller')
+const express = require("express");
+const { Router } = express;
+const { offenses, offense } = require("./../controller/offense.Controller");
 
-const offenseRouter = Router()
+const offenseRouter = Router();
 
-offenseRouter.route('/').get(offenses)
-offenseRouter.route('/:id').get(offense)
+offenseRouter.route("/").get(offenses);
+offenseRouter.route("/:id").get(offense);
 
-
-module.exports = offenseRouter
+module.exports = offenseRouter;

@@ -264,18 +264,17 @@ const officerActions = (
       const user = await Citizens.findOne({ _id: citizenID });
       console.log(user._id, citizenID);
 
-        const offense = new Offenses({
-          name,
-          description,
-          citizen: user._id,
-        })
-        
-        
-        await offense.save()
+      const offense = new Offenses({
+        name,
+        description,
+        citizen: user._id,
+      });
 
-        console.log(user.offenses)
+      await offense.save();
 
-        res.json("Officer can add offenses");
+      console.log(user.offenses);
+
+      res.json("Officer can add offenses");
     } catch (err) {
       res.status(500).json(err);
     }

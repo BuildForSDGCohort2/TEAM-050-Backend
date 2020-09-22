@@ -6,8 +6,8 @@ const offense = new Schema(
   {
     citizen: {
       type: Schema.Types.ObjectId,
-      ref: 'citizen',
-      required: true
+      ref: "citizen",
+      required: true,
     },
     name: {
       type: String,

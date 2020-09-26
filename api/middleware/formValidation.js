@@ -6,7 +6,7 @@ const validation = (check) => {
 
   const loginForm = [
     check("email").isEmail(),
-    check("password").not().notEmpty(),
+    check("password").not().isEmpty(),
   ];
   return {
     regForm,

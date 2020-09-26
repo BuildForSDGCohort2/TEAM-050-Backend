@@ -22,6 +22,7 @@ const citizenSchema = new Schema({
     type: String,
     required: true,
   },
+  profileImage: String,
   // POB: {
   //   type: Date,
   //   required: true,
@@ -45,9 +46,9 @@ const citizenSchema = new Schema({
       required: true,
     },
   },
-  // fingerPrint: {
-  //   type: String,
-  // },
+  fingerPrint: {
+    type: String,
+  },
   // periodOfResidence: {
   //   type: Date,
   //   required: true,

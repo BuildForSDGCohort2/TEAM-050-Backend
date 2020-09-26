@@ -1,3 +1,4 @@
+const mongoose = require("mongoose");
 const express = require("express");
 const { Router } = express;
 const Officers = require("./../model/officer.model");
@@ -17,6 +18,7 @@ const {
   logout,
   update,
   offense,
+  resetPassword
 } = require("./../controller/officer.Controller")(
   Officers,
   bcrypt,
@@ -24,18 +26,20 @@ const {
   jwt,
   mySecrete,
   Offenses,
-  Citizens
+  Citizens,
+  mongoose
 );
 
 const officerRouter = Router();
 
 officerRouter.route("/").get(officers);
-officerRouter.route("/register").post(register);
-officerRouter.route("/login").post(login);
-officerRouter.route("/logout").get(logout);
-officerRouter.route("/edit/:officerID").patch(update);
-officerRouter.route("/profile/:officerID").get(profile);
-officerRouter.route("/delete/:officerID").delete(deltOfficer);
-officerRouter.route("/offense/add").post(offense);
+officerRouter.route("/register").post(regForm ,register);
+officerRouter.route("/login").post(loginForm ,login);
+officerRouter.route("/logout").get(auth, logout);
+officerRouter.route("/edit/:officerID").patch(auth, update);
+officerRouter.route("/profile/:officerID").get(auth, profile);
+officerRouter.route("/delete/:officerID").delete(auth, deltOfficer);
+officerRouter.route('/resetPassword/:officerID').patch(resetPassword)
+officerRouter.route("/offense/add").post(auth, offense);
 
 module.exports = officerRouter;

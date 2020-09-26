@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+
 const officerActions = (
   Officers,
   bcrypt,
@@ -6,7 +6,8 @@ const officerActions = (
   jwt,
   mySecrete,
   Offenses,
-  Citizens
+  Citizens,
+  mongoose
 ) => {
   /**
    * @param       GET /api/v1/officer
@@ -17,7 +18,6 @@ const officerActions = (
     try {
       const officers = await Officers.find({});
       res.status(200).json({
-        msg: "Testing the route",
         totalOfficers: officers.length,
         officers: officers.map((officer) => {
           return {
@@ -81,7 +81,6 @@ const officerActions = (
       if (user) return res.status(400).json(`${email} is already in use`);
 
       const officer = new Officers({
-        // _id: mongoose.Types.ObjectId,
         name,
         email,
         password,
@@ -233,6 +232,23 @@ const officerActions = (
   };
 
   /**
+   * @param       PATCH /api/v1/officer/edit/:id
+   * @desc        displays citizens dashboard
+   * @access      public( only signed in citizens can access)
+   */
+  const resetPassword = async (req, res) => {
+    try {
+      const officer = await Officers.findOneAndUpdate(
+        { _id: req.params.officerID },
+        req.body.password
+      );
+      res.json(officer);
+    } catch (err) {
+      res.status(500).json(err);
+    }
+  };
+
+  /**
    * @param       POST /api/v1/citizen/logout
    * @desc        citizen can logout of the platform
    * @access      protected( only logged in citizen can access)
@@ -262,7 +278,6 @@ const officerActions = (
         });
 
       const user = await Citizens.findOne({ _id: citizenID });
-      console.log(user._id, citizenID);
 
       const offense = new Offenses({
         name,
@@ -271,8 +286,6 @@ const officerActions = (
       });
 
       await offense.save();
-
-      console.log(user.offenses);
 
       res.json("Officer can add offenses");
     } catch (err) {
@@ -289,6 +302,7 @@ const officerActions = (
     profile,
     update,
     offense,
+    resetPassword
   };
 };
 

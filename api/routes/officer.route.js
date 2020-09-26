@@ -9,6 +9,7 @@ const { mySecrete } = require("./../../config/default");
 const jwt = require("jsonwebtoken");
 const { check, validationResult } = require("express-validator");
 const { regForm, loginForm } = require("./../middleware/formValidation")(check);
+const auth = require('./../middleware/auth')
 const {
   officers,
   register,

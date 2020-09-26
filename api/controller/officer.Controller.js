@@ -238,11 +238,20 @@ const officerActions = (
    */
   const resetPassword = async (req, res) => {
     try {
+      const { password } = req.body
+
+      if(!password) return res.json({
+        status: "password not changed",
+        msg: "Please provide a new password"
+      })
       const officer = await Officers.findOneAndUpdate(
         { _id: req.params.officerID },
         req.body.password
       );
-      res.json(officer);
+      res.json({
+        msg: "your password change was successful",
+        officer
+      });
     } catch (err) {
       res.status(500).json(err);
     }

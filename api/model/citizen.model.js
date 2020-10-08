@@ -3,16 +3,15 @@ const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
 const citizenSchema = new Schema({
-  name: {
-    first: {
+    firstName: {
       type: String,
       required: true,
     },
-    last: {
+    lastName: {
       type: String,
       required: true,
     },
-  },
+phone: Number,
   email: {
     type: String,
     required: true,
@@ -22,28 +21,26 @@ const citizenSchema = new Schema({
     type: String,
     required: true,
   },
+placeOfBirth: String,
+residentialAddress: String,
   profileImage: String,
   // POB: {
   //   type: Date,
   //   required: true,
   // },
   nationality: {
-    type: String,
-    required: true,
+    type: String
   },
   passport: {
     number: {
-      type: Number,
-      require: true,
+      type: Number
     },
 
     date: {
       type: Date,
-      required: true,
     },
     placeOfIssuance: {
       type: String,
-      required: true,
     },
   },
   fingerPrint: {

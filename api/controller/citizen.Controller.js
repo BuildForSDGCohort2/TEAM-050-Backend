@@ -98,8 +98,15 @@ const citizenActions = (Citizens, bcrypt, mySecrete, jwt, validationResult) => {
 
       console.log(citizen);
 
+      const payload = {
+        user: citizen._id,
+      };
+      const token = jwt.sign(payload, mySecrete, { expiresIn: "1hr" });
+
+
       res.status(201).json({
         msg: `${citizen.name.first} ${citizen.name.last} is successfully registered`,
+        toke,
         request: {
           Login: {
             type: "POST",

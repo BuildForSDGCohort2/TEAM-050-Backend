@@ -10,14 +10,16 @@ const validation = (check) => {
     check("nationality").not().isEmpty(),
     check("passportNum").not().isEmpty(),
     check("nationalIdentificationNumber").not().isEmpty(),
-    check("password").isLength({ min: 5 }).custom((value, {req, loc, path}) => {
-      if(value !== req.body.password1) {
-        //throw error if passwords don't match
-        throw new Error("Password do not match")
-      } else {
-        return value;
-      }
-    })
+    check("password")
+      .isLength({ min: 5 })
+      .custom((value, { req, loc, path }) => {
+        if (value !== req.body.password1) {
+          //throw error if passwords don't match
+          throw new Error("Password do not match");
+        } else {
+          return value;
+        }
+      }),
   ];
 
   const loginForm = [

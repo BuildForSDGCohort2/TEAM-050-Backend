@@ -101,16 +101,14 @@ const citizenActions = (Citizens, bcrypt, mySecrete, jwt, validationResult) => {
       const hash = await bcrypt.hash(password, salt);
       citizen.password = hash;
       
-      await citizen.save();
-      
-      console.log(citizen);
+      await citizen.save()
       
       const payload = {
         user: citizen._id,
       };
       const token = jwt.sign(payload, mySecrete, { expiresIn: "1hr" });
       
-      console.log("works here");
+      
       res.status(201).json({
         msg: `${citizen.firstName} ${citizen.lastName} is successfully registered`,
         token,

@@ -60,52 +60,64 @@ const citizenActions = (Citizens, bcrypt, mySecrete, jwt, validationResult) => {
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
     }
-
     try {
       const {
-        name,
+        firstName,
+        lastName,
         email,
-        password,
-        // POB,
+        phone,
+        placeOfBirth,
+        residentialAddress,
+        dateOfBirth,
         nationality,
-        passport,
-        fingerPrint,
-        periodOfResidence,
-        age,
-        passportPages,
+        passportNum,
+        nationalIdentificationNumber,
+        password,
+        password1,
       } = req.body;
-
+      
       const user = await Citizens.findOne({ email });
-
+      
       if (user) return res.status(400).json(`${email} is already in use`);
-
+      
       const citizen = new Citizens({
         // _id: mongoose.Types.ObjectId,
-        name,
+        firstName,
+        lastName,
         email,
-        password,
-        passport,
+        phone,
+        placeOfBirth,
+        residentialAddress,
+        dateOfBirth,
         nationality,
-        periodOfResidence,
-        profileImage: req.file.path,
+        passportNum,
+        nationalIdentificationNumber,
+        password,
+        password1,
+        // profileImage: req.file.path,
       });
-
+      
       const salt = await bcrypt.genSalt(10);
       const hash = await bcrypt.hash(password, salt);
       citizen.password = hash;
-
-      await citizen.save();
-
-      console.log(citizen);
-
+      
+      await citizen.save()
+      
+      const payload = {
+        user: citizen._id,
+      };
+      const token = jwt.sign(payload, mySecrete, { expiresIn: "1hr" });
+      
+      
       res.status(201).json({
-        msg: `${citizen.name.first} ${citizen.name.last} is successfully registered`,
+        msg: `${citizen.firstName} ${citizen.lastName} is successfully registered`,
+        token,
         request: {
           Login: {
             type: "POST",
             url: "http://localhost:3000/api/v1/citizen/login",
             description:
-              "Registered citizens can follow the provided url to login to their profile page. If you are using postman to, the request will be a post request",
+            "Registered citizens can follow the provided url to login to their profile page. If you are using postman to, the request will be a post request",
           },
         },
       });
@@ -113,7 +125,7 @@ const citizenActions = (Citizens, bcrypt, mySecrete, jwt, validationResult) => {
       res.status(500).json(err);
     }
   };
-
+  
   /**
    * @param       POST /api/v1/citizen/login
    * @desc        route for citizens to signin on the platform

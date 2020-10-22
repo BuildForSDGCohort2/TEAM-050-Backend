@@ -4,7 +4,7 @@ const config = require("./default");
 const dbConnection = () => {
   const db = mongoose.connection;
 
-  mongoose.connect(config.MONGO_URI, {
+  mongoose.connect(config.MONGO_DB, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   });
